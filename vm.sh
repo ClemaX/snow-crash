@@ -68,7 +68,7 @@ vm_up()
 			do
 				echo "Fetching '$vm_image'..."
 
-				curl -L -O -C "$iso_url" --output "$vm_image"
+				curl -L -O -C - "$iso_url" --output "$vm_image"
 			done
 		popd
 
