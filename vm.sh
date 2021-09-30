@@ -88,7 +88,7 @@ vm_up()
 	if ! vm_running
 	then
 		echo "Starting '$vm_name'..."
-		VBoxHeadless --startvm "$vm_name"
+		VBoxManage startvm "$vm_name" --type headless
 	else
 		print_vm_started 2>&1
 		return 1
@@ -99,11 +99,12 @@ vm_down()
 {
 	if vm_exists
 	then
-		echo "Tearing down '$vm_name'..."
 		if vm_running
 		then
+			echo "Waiting for '$vm_name' to power off,,,"
 			VBoxManage controlvm "$vm_name" poweroff && sleep 2
 		fi
+		echo "Tearing down '$vm_name'..."
 		VBoxManage unregistervm "$vm_name" --delete
 	fi
 }
