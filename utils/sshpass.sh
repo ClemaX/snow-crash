@@ -2,8 +2,13 @@
 
 set timeout 20
 
-set cmd [lrange $argv 1 end]
+if {[llength $argv] < 2} {
+	puts "Usage $argv0 [expect option ...] password cmd \[args ...\]"
+	exit 1
+}
+
 set password [lindex $argv 0]
+set cmd [lrange $argv 1 end]
 
 # Run the given command
 eval spawn $cmd
