@@ -13,9 +13,12 @@ rotate_c() # c n
 
 	tmp="${charset%%$c*}"
 	pos="${#tmp}"
-
-	pos=$(($(($pos + $n)) % ${#charset}))
-	echo -n "${charset:$pos:1}"
+	
+	if [ $pos -ne ${#charset} ]
+	then
+		pos=$(($(($pos + $n)) % ${#charset}))
+		echo -n "${charset:$pos:1}"
+	fi
 }
 
 rotate() # str n
@@ -25,6 +28,7 @@ rotate() # str n
 
 	for ((i=0; i<${#str}; i++))
 	do
+		
 		rotate_c "${str:$i:1}" "$n"	
 	done
 }
@@ -34,9 +38,9 @@ input="${2:-}"
 
 if [ -z $input ]
 then
-	while read -r input
+	while IFS="" read -r input
 	do
-		rotate $input $end
+		rotate "$input" "$end"
 		echo
 	done	
 else

@@ -1,2 +1,0 @@
-install john on vm
-john /etc/passwd file => abcdefg
