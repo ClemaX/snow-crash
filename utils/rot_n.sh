@@ -8,11 +8,11 @@ charset="abcdefghijklmnopqrstuvwxyz"
 
 rotate_c() # c n
 {
-	c="$1"
-	n="$2"
+	local c="$1"
+	local n="$2"
 
-	tmp="${charset%%$c*}"
-	pos="${#tmp}"
+	local tmp="${charset%%$c*}"
+	local pos="${#tmp}"
 
 	if [ $pos -ne ${#charset} ]
 	then
@@ -23,8 +23,8 @@ rotate_c() # c n
 
 rotate() # str n
 {
-	str="$1"
-	n="$2"
+	local str="$1"
+	local n="$2"
 
 	for ((i=0; i<${#str}; i++))
 	do
