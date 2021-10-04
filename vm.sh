@@ -60,7 +60,7 @@ vm_running()
 
 vm_up()
 {
-	if ! vm_exists 
+	if ! vm_exists
 	then
 		# Download the disk image.
 		pushd "$(dirname "$vm_image")"
@@ -125,7 +125,7 @@ vm_ipv4()
 
 vm_ssh() # user
 {
-	user="$1"
+	local user="$1"
 
 	if [ -z $user ]
 	then
@@ -138,9 +138,9 @@ vm_ssh() # user
 	then
 		if [ "$vm_net" = nat ]
 		then
-			port="$host_ssh_port"
+			local port="$host_ssh_port"
 		else
-			port="$vm_ssh_port"
+			local port="$vm_ssh_port"
 		fi
 
 		ssh -p "$port" "$user@$(vm_ipv4)"
