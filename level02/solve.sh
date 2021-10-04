@@ -7,7 +7,7 @@ UTILS_DIR="$PARENT_DIR/../utils"
 
 PATH="$UTILS_DIR:$PATH"
 
-which wireshark >/dev/null || (echo "You need to install wireshark using your packet manager!" !>&2 && exit 1)
+which tshark>/dev/null || (echo "$0: You need to install wireshark using your packet manager!" >&2 && exit 1)
 
 stream_extract() # file [stream]
 {
@@ -41,8 +41,8 @@ port="$2"
 pass="$3"
 
 sshpass.sh "$pass" scp -P "$port" "level02@$host:level02.pcap" "$PARENT_DIR/" >/dev/null
-chmod u+rw level02.pcap
+chmod u+rw "$PARENT_DIR/level02.pcap"
 
-pass="$(stream_extract level02.pcap | grep --text Password | cut -b11- | parse_del)"
+pass="$(stream_extract "$PARENT_DIR/level02.pcap" | grep --text Password | cut -b11- | parse_del)"
 
 sshexec.sh "$host" "$port" flag02 "$pass" "getflag"
