@@ -22,9 +22,12 @@ parse_flag()
 
 for level in level*
 do
-	prev_flag="$flag"
-	flag="$("$level/solve.sh" "$vm_ip" "$vm_ssh_port" "$prev_flag" | parse_flag)"
-	i=$((${level:5} + 1))
-	echo "level$i:$flag"
+	if [ -x "$level/solve.sh" ]
+	then
+		prev_flag="$flag"
+		flag="$("$level/solve.sh" "$vm_ip" "$vm_ssh_port" "$prev_flag" | parse_flag)"
+		n=$((${level:5} + 1))
+		printf 'level%02u:%s\n' "$n" "$flag"
+	fi
 done
 
