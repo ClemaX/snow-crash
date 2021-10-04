@@ -17,7 +17,7 @@ stream_extract() # file [stream]
 	tshark -nlr "$file" -qz "follow,tcp,raw,$stream" | tail -n +7 | sed 's/^\s\+//g' | xxd -r -p
 }
 
-parse_del() 
+parse_del()
 {
 	local dst=
 	local bs="$(echo -e '\x7f')"
@@ -40,7 +40,7 @@ host="$1"
 port="$2"
 pass="$3"
 
-sshpass.sh "$pass" scp -P "$port" "level02@$host:level02.pcap" "$PARENT_DIR/" >/dev/null
+pass.exp "$pass" scp -P "$port" "level02@$host:level02.pcap" "$PARENT_DIR/" >/dev/null
 chmod u+rw "$PARENT_DIR/level02.pcap"
 
 pass="$(stream_extract "$PARENT_DIR/level02.pcap" | grep --text Password | cut -b11- | parse_del)"

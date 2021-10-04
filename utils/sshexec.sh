@@ -18,4 +18,4 @@ password="${4}"
 
 cmd="${5:-bash}"
 
-sshpass.sh "$password" ssh -p "$port" "$user"@"$host" "$cmd" | tail -n +3 | tr -d '\r'
+pass.exp "$password" ssh -p "$port" "$user"@"$host" "$cmd" | tail -n +3 | tr -d '\r'
