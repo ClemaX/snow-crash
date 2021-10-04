@@ -3,7 +3,7 @@
 set timeout 20
 
 if {[llength $argv] < 2} {
-	puts "Usage $argv0 [expect option ...] password cmd \[args ...\]"
+	puts "Usage $argv0 \[expect option ...\] password cmd \[args ...\]"
 	exit 1
 }
 
