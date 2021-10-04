@@ -8,11 +8,11 @@ vm_ssh_port=4242
 flag=""
 
 pushd () {
-    command pushd "$@" > /dev/null
+	pushd "$@" > /dev/null
 }
 
 popd () {
-    command popd "$@" > /dev/null
+	command popd "$@" > /dev/null
 }
 
 parse_flag()
@@ -20,7 +20,7 @@ parse_flag()
 	cut -b 33- -
 }
 
-for level in level*/
+for level in level*
 do
 	n=$((${level:5} + 1))
 
