@@ -18,7 +18,7 @@ vm_ssh_port="4242"
 
 print_help()
 {
-	echo -e "Usage $0 [COMMAND]
+	echo -e "Usage $0 [command]
 Commands:
     up      Setup and stat the virtual machine.
     down    Unregister and delete the virtual machine.
@@ -31,7 +31,7 @@ If no argument is provided, 'up' will be assumed."
 
 print_ssh_usage()
 {
-	echo -e "Usage: $0 ssh USER"
+	echo -e "Usage: $0 ssh user[:pass]"
 }
 
 print_vm_stopped()
@@ -143,7 +143,14 @@ vm_ssh() # user
 			local port="$vm_ssh_port"
 		fi
 
-		ssh -p "$port" "$user@$(vm_ipv4)"
+		local pass="${user##*:}"
+
+		if ! [ -z $pass ]
+		then
+			"$(dirname "$0")/utils/pass.exp" "$pass" ssh -p "$port" "${user%%:*}@$(vm_ipv4)"
+		else
+			ssh -p "$port" "$user@$(vm_ipv4)"
+		fi
 	else
 		print_vm_stopped 2>&1
 		return 1
