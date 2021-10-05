@@ -34,7 +34,7 @@ do
 	then
 		flag="$("$level/solve.sh" "$vm_ip" "$vm_ssh_port" "$prev_flag" | parse_flag)"
 
-		[ -z $flag ] && echo "Could not solve $level: empty flag!" >&2 && exit 1
+		[ -z "$flag" ] && echo "Could not solve $level: empty flag!" >&2 && exit 1
 
 		echo "$flag" > "$level/flag"
 

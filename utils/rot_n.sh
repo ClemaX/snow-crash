@@ -35,7 +35,7 @@ rotate() # str n
 end=${1:-$MAX}
 input="${2:-}"
 
-if [ -z $input ]
+if [ -z "$input" ]
 then
 	while IFS="" read -r input
 	do

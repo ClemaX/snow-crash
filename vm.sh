@@ -127,7 +127,7 @@ vm_ssh() # user
 {
 	local user="$1"
 
-	if [ -z $user ]
+	if [ -z "$user" ]
 	then
 		echo "$0: ssh: Missing user argument." 2>&1
 		print_ssh_usage 2>&1
@@ -145,7 +145,7 @@ vm_ssh() # user
 
 		local pass="${user##*:}"
 
-		if ! [ -z $pass ]
+		if ! [ -z "$pass" ]
 		then
 			"$(dirname "$0")/utils/pass.exp" "$pass" ssh -p "$port" "${user%%:*}@$(vm_ipv4)"
 		else
