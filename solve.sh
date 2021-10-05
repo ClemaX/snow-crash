@@ -22,7 +22,7 @@ parse_flag()
 
 for level in level*
 do
-	n=$((${level:5} + 1))
+	n=$((10#${level:5} + 1))
 
 	prev_flag="$flag"
 	if [ -f "$level/flag" ]
