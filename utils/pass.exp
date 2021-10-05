@@ -24,6 +24,6 @@ expect {
 	"assword:" { send "$password\r"; interact; exit 0 }
 }
 
-foreach {pid spawnid os_error_flag value} [wait] break
+foreach { pid spawnid os_error_flag value } [wait] break
 
 exit $value
