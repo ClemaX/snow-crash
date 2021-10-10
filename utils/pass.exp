@@ -1,5 +1,12 @@
 #!/usr/bin/expect -f
 
+# Update window size on SIGWINCH
+trap {
+ set rows [stty rows]
+ set cols [stty columns]
+ stty rows $rows columns $cols < $spawn_out(slave,name)
+} WINCH
+
 set timeout 20
 
 if { [llength $argv] < 2 } {
