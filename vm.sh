@@ -78,7 +78,7 @@ vm_up()
 
 		# Create and register vm in current working directory.
 		VBoxManage createvm --name "$vm_name" --ostype "$vm_os" --register --basefolder "$vm_dir"
-		VBoxManage modifyvm "$vm_name" --memory "$vm_ram" --vram "$vm_vram" --graphicscontroller "$vm_gfx" --nic1 "$vm_net" --natpf1 "ssh,tcp,,$vm_ssh_port,,$host_ssh_port"
+		VBoxManage modifyvm "$vm_name" --memory "$vm_ram" --vram "$vm_vram" --graphicscontroller "$vm_gfx" --nic1 "$vm_net" --natpf1 "ssh,tcp,,$host_ssh_port,,$vm_ssh_port"
 
 		# Add an IDE controller
 		VBoxManage storagectl "$vm_name" --name "IDE Controller" --add ide --controller PIIX4
