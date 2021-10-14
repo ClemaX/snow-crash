@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 host_ssh_port=4242
 
 iso_url="https://projects.intra.42.fr/uploads/document/document/5137/SnowCrash.iso"
@@ -75,7 +77,7 @@ vm_up()
 		echo "Initializing '$vm_name' at '$vm_dir'..."
 
 		# Create and register vm in current working directory.
-		VBoxManage createvm --name "$vm_name" --ostype "$vm_type" --register --basefolder "$vm_dir"
+		VBoxManage createvm --name "$vm_name" --ostype "$vm_os" --register --basefolder "$vm_dir"
 		VBoxManage modifyvm "$vm_name" --memory "$vm_ram" --vram "$vm_vram" --graphicscontroller "$vm_gfx" --nic1 "$vm_net" --natpf1 "ssh,tcp,,$vm_ssh_port,,$host_ssh_port"
 
 		# Add an IDE controller
@@ -125,7 +127,7 @@ vm_ipv4()
 
 vm_ssh() # user
 {
-	local user="$1"
+	local user="${1:-}"
 
 	if [ -z "$user" ]
 	then
@@ -157,7 +159,7 @@ vm_ssh() # user
 	fi
 }
 
-case "$1" in
+case "${1:-}" in
 	"up" | ""	)	vm_up;;
 	"down"		)	vm_down;;
 	"ip"		)	vm_ipv4;;
