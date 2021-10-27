@@ -17,7 +17,7 @@ popd () {
 
 parse_flag()
 {
-	cut -b 33- -
+	cut -d':' -f2 | tr -d ' '
 }
 
 for level in level*
