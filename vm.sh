@@ -147,6 +147,11 @@ vm_ssh() # user
 
 		local pass="${user##*:}"
 
+		if [ "$TERM" == "xterm-termite" ]
+		then
+			TERM="xterm"
+		fi
+
 		if ! [ -z "$pass" ]
 		then
 			"$(dirname "$0")/utils/pass.exp" "$pass" ssh -p "$port" "${user%%:*}@$(vm_ipv4)"
