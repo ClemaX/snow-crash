@@ -250,10 +250,7 @@ static int	syscall_regs_get(pid_t pid, struct syscall_regs *regs)
 
 static int	syscall_get(pid_t pid)
 {
-	int	no = ptrace(PTRACE_PEEKUSER, pid, SYSCALL * sizeof(reg_t), NULL);
-
-	fprintf(stderr, "SYS_%d(...)\n", no);
-	return no;
+	return ptrace(PTRACE_PEEKUSER, pid, SYSCALL * sizeof(reg_t), NULL);
 }
 
 static int	syscall_open_print(pid_t pid)
