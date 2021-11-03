@@ -222,40 +222,6 @@ static int	text_poke(pid_t pid, reg_t addr, const void *data, size_t size)
 	return (int)size;
 }
 
-/*
-static int	text_print(pid_t pid, reg_t addr)
-{
-	reg_t	word;
-	int		len = sizeof(reg_t);
-
-	do
-	{
-		word = ptrace(PTRACE_PEEKTEXT, pid, addr, NULL);
-
-		len = -(errno != 0);
-		if (len == 0)
-		{
-			len = strlen((char *)&word);
-			fprintf(stderr, "%.*s", len, (char *)&word);
-			addr += len;
-		}
-		else
-			perror("ptrace: peektext");
-	}
-	while (len == sizeof(reg_t));
-
-	return len;
-} */
-/* static int	text_print(pid_t pid, reg_t addr)
-{
-	char	*str = text_dup(pid, addr);
-
-	fprintf(stderr, "%s\n", str);
-
-	free(str);
-	return 0;
-} */
-
 static int	syscall_regs_get(pid_t pid, struct syscall_regs *regs)
 {
 	struct user_regs_struct	uregs;
@@ -362,30 +328,6 @@ static int	syscall_wait_open(int pid, const char *filename)
 
 	return status;
 }
-
-/*
-static int	syscall_write_print(pid_t pid)
-{
-	struct syscall_regs	regs;
-	char				*str;
-	int					ret;
-
-	syscall_regs_get(pid, &regs);
-
-	str = text_dup(pid, regs.av[1]);
-
-	if (str != NULL)
-	{
-		ret = fprintf(stderr, "write(%d, %.*s, %zu)\n",
-			(int)regs.av[0], (int)regs.av[2], (char *)str, (size_t)regs.av[2]);
-		free(str);
-	}
-	else
-		ret = -1;
-
-	return ret;
-}
- */
 
 static reg_t	stack_poke(pid_t pid, const void *data, size_t size)
 {
