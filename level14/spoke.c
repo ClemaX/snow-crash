@@ -30,7 +30,7 @@ typedef uint32_t	reg_t;
 
 # define SYSCALL ORIG_EAX
 # define RET EAX
-# define SP ESP
+# define SP UESP
 # define ARG0 EBX
 # define ARG1 ECX
 # define ARG2 EDX
@@ -41,7 +41,6 @@ typedef uint32_t	reg_t;
 #else
 
 typedef uint64_t	reg_t;
-
 
 # define PRIdREG PRId64
 # define PRIiREG PRIi64
@@ -66,6 +65,14 @@ typedef uint64_t	reg_t;
 
 #ifndef TRACEE_OPTIONS
 # define TRACEE_OPTIONS (PTRACE_O_TRACESYSGOOD | PTRACE_O_EXITKILL)
+#endif
+
+#ifndef O_TMPFILE
+# define O_TMPFILE 0
+#endif
+
+#ifndef PTRACE_O_EXITKILL
+# define PTRACE_O_EXITKILL 0
 #endif
 
 struct syscall_regs
@@ -122,6 +129,36 @@ static int	syscall_wait(pid_t pid, int no)
 	|| WIFEXITED(status) || WIFSIGNALED(status)));
 
 	return status;
+}
+
+static int	syscall_wait_open(int pid, const char *filename)
+{
+	int		syscalled;
+	reg_t	arg0;
+	char	*orig_filename = NULL;
+
+	do
+	{
+		free(orig_filename);
+		orig_filename = NULL;
+
+		syscalled = syscall_wait(pid, SYS_open);
+		syscalled = WIFSYSCALLED(syscalled);
+
+		if (syscalled)
+		{
+			arg0 = ptrace(PTRACE_PEEKUSER, pid, ARG0 * sizeof(reg_t), NULL);
+			if (errno == 0)
+				orig_filename = text_dup(pid, arg0);
+			else
+				perror("ptrace: peekuser");
+		}
+
+	} while (syscalled > 0 && strcmp(filename, orig_filename));
+
+	free(orig_filename);
+
+	return syscalled;
 }
 
 static unsigned	word_len(reg_t word)
