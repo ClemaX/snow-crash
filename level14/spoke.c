@@ -290,75 +290,6 @@ static int	syscall_get(pid_t pid)
 	return no;
 }
 
-static int	syscall_wait(pid_t pid, int no)
-{
-	int	status;
-
-	do
-	{
-		ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
-		waitpid(pid, &status, 0);
-	}
-	while (!((WIFSYSCALLED(status) && syscall_get(pid) == no)
-	|| WIFEXITED(status) || WIFSIGNALED(status)));
-
-	return status;
-}
-
-static int	syscall_wait_open(int pid, const char *filename)
-{
-	int		syscalled;
-	reg_t	arg0;
-	char	*orig_filename = NULL;
-
-	do
-	{
-		free(orig_filename);
-		orig_filename = NULL;
-
-		syscalled = syscall_wait(pid, SYS_open);
-		syscalled = WIFSYSCALLED(syscalled);
-
-		if (syscalled)
-		{
-			arg0 = ptrace(PTRACE_PEEKUSER, pid, ARG0 * sizeof(reg_t), NULL);
-			if (errno == 0)
-				orig_filename = text_dup(pid, arg0);
-			else
-				perror("ptrace: peekuser");
-		}
-
-	} while (syscalled > 0 && strcmp(filename, orig_filename));
-
-	free(orig_filename);
-
-	return syscalled;
-}
-
-/*
-static int	syscall_write_print(pid_t pid)
-{
-	struct syscall_regs	regs;
-	char				*str;
-	int					ret;
-
-	syscall_regs_get(pid, &regs);
-
-	str = text_dup(pid, regs.av[1]);
-
-	if (str != NULL)
-	{
-		ret = fprintf(stderr, "write(%d, %.*s, %zu)\n",
-			(int)regs.av[0], (int)regs.av[2], (char *)str, (size_t)regs.av[2]);
-		free(str);
-	}
-	else
-		ret = -1;
-
-	return ret;
-}
- */
-
 static int	syscall_open_print(pid_t pid)
 {
 	struct syscall_regs	regs;
@@ -385,6 +316,76 @@ static int	syscall_open_print(pid_t pid)
 
 	return ret;
 }
+
+static int	syscall_wait(pid_t pid, int no)
+{
+	int	status;
+
+	do
+	{
+		ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+		waitpid(pid, &status, 0);
+	}
+	while (!((WIFSYSCALLED(status) && syscall_get(pid) == no)
+	|| WIFEXITED(status) || WIFSIGNALED(status)));
+
+	return status;
+}
+
+static int	syscall_wait_open(int pid, const char *filename)
+{
+	int		status;
+	int		syscalled;
+	reg_t	arg0;
+	char	*orig_filename = NULL;
+
+	do
+	{
+		free(orig_filename);
+		orig_filename = NULL;
+
+		status = syscall_wait(pid, SYS_open);
+		syscalled = WIFSYSCALLED(status);
+
+		if (syscalled)
+		{
+			arg0 = ptrace(PTRACE_PEEKUSER, pid, ARG0 * sizeof(reg_t), NULL);
+			if (errno == 0)
+				orig_filename = text_dup(pid, arg0);
+			else
+				perror("ptrace: peekuser");
+		}
+
+	} while (syscalled > 0 && strcmp(filename, orig_filename));
+
+	free(orig_filename);
+
+	return status;
+}
+
+/*
+static int	syscall_write_print(pid_t pid)
+{
+	struct syscall_regs	regs;
+	char				*str;
+	int					ret;
+
+	syscall_regs_get(pid, &regs);
+
+	str = text_dup(pid, regs.av[1]);
+
+	if (str != NULL)
+	{
+		ret = fprintf(stderr, "write(%d, %.*s, %zu)\n",
+			(int)regs.av[0], (int)regs.av[2], (char *)str, (size_t)regs.av[2]);
+		free(str);
+	}
+	else
+		ret = -1;
+
+	return ret;
+}
+ */
 
 static reg_t	stack_poke(pid_t pid, const void *data, size_t size)
 {
@@ -456,20 +457,20 @@ static int	tracer(pid_t pid)
 
 	while (exited == 0)
 	{
-		status = syscall_wait(pid, SYS_open);
+		status = syscall_wait_open(pid, "/proc/self/maps");
 		exited = (WIFEXITED(status) != 0) + ((WIFSIGNALED(status) != 0) << 1);
 		if (!exited)
 		{
 			syscall_open_print(pid);
-			/* fprintf(stderr, "Hiding maps to %s...\n", fake_maps);
+			fprintf(stderr, "Hiding maps to %s...\n", fake_maps);
 			maps_hide(pid, fake_maps);
 			fprintf(stderr, "Poking stack...\n");
 			filename = stack_poke(pid, fake_maps, sizeof(fake_maps) - 1);
 			fprintf(stderr, "Poking argument 0x%"PRIxREG" to ARG0...\n", filename);
-			ptrace(PTRACE_POKEUSER, pid, ARG0 * sizeof(reg_t), filename); */
+			ptrace(PTRACE_POKEUSER, pid, ARG0 * sizeof(reg_t), filename);
 			ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
 			waitpid(pid, 0, 0);
-			syscall_open_print(pid);
+			//syscall_open_print(pid);
 		}
 	}
 
